@@ -1,0 +1,19 @@
+{
+  "name": "vertretungsplanleoninumbackend",
+  "version": "1.0.0",
+  "description": "Backend der vertretungsplan am Leo App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oliver Enes",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.16.2",
+    "htmlparser": "^1.7.7",
+    "htmlparser2": "^3.9.2",
+    "js-yaml": "^3.10.0",
+    "jsdom": "^11.6.2",
+    "windows-1252": "^1.0.0"
+  }
+}
