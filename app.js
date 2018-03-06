@@ -165,10 +165,10 @@ function processPlan(htmlPage)
             tmpTable.hour = rows.item(i).cells[0].textContent;
             tmpTable.class = rows.item(i).cells[1].textContent;
             tmpTable.subject = rows.item(i).cells[2].textContent;
-            tmpTable.teacher = rows.item(i).cells[3].textContent.replace("�", "ä").replace("�", "ü");
-            tmpTable.replacement = rows.item(i).cells[4].textContent.replace("�", "ä").replace("�", "ü");
+            tmpTable.teacher = rows.item(i).cells[3].textContent;
+            tmpTable.replacement = rows.item(i).cells[4].textContent;
             tmpTable.room = rows.item(i).cells[5].textContent;
-            tmpTable.comment = rows.item(i).cells[6].textContent.replace("�", "ä").replace("\n", "");
+            tmpTable.comment = rows.item(i).cells[6].textContent;
             tables.push(tmpTable);
         }
         return tables;
@@ -177,6 +177,13 @@ function processPlan(htmlPage)
     processedPlan.lessons = processTable(day, day.window.document.getElementsByTagName("table")[0]);
 
     return processedPlan;
+}
+
+function toUTF8(body) {
+    // convert from iso-8859-1 to utf-8
+    var ic = new iconv.Iconv('windows-1252', 'UTF-8');
+    var buf = ic.convert(body);
+    return buf.toString('UTF-8');
 }
 
 app.get("/fetch/:day", function (req, response)
@@ -206,7 +213,8 @@ app.get("/fetch/:day", function (req, response)
         method: "GET",
         headers: {
             Cookie: "MoodleSession=" + req.query["moodleSession"]
-        }
+        },
+        encoding: "latin1"
     }, function (req, res, body)
     {
         if (!res)
@@ -221,7 +229,7 @@ app.get("/fetch/:day", function (req, response)
         {
             try
             {
-                response.json(processPlan(body));
+                response.json(processPlan(body.replace(/\r?\n|\r/g, ""))); // remove escape characters
             } catch (e)
             {
                 response.json({error: "Wrong server response"});
