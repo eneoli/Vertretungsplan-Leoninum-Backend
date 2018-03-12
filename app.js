@@ -162,13 +162,13 @@ function processPlan(htmlPage)
         for (var i = 1; i < rows.length; i++)
         {
             var tmpTable = {};
-            tmpTable.hour = rows.item(i).cells[0].textContent;
-            tmpTable.class = rows.item(i).cells[1].textContent;
-            tmpTable.subject = rows.item(i).cells[2].textContent;
-            tmpTable.teacher = rows.item(i).cells[3].textContent;
-            tmpTable.replacement = rows.item(i).cells[4].textContent;
-            tmpTable.room = rows.item(i).cells[5].textContent;
-            tmpTable.comment = rows.item(i).cells[6].textContent;
+            tmpTable.hour = rows.item(i).cells[0].textContent.trim();
+            tmpTable.class = rows.item(i).cells[1].textContent.trim();
+            tmpTable.subject = rows.item(i).cells[2].textContent.trim();
+            tmpTable.teacher = rows.item(i).cells[3].textContent.trim();
+            tmpTable.replacement = rows.item(i).cells[4].textContent.trim();
+            tmpTable.room = rows.item(i).cells[5].textContent.trim();
+            tmpTable.comment = rows.item(i).cells[6].textContent.trim();
             tables.push(tmpTable);
         }
         return tables;
