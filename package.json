@@ -11,6 +11,8 @@
   "dependencies": {
     "express": "^4.16.2",
     "js-yaml": "^3.10.0",
-    "jsdom": "^11.6.2"
+    "jsdom": "^11.6.2",
+    "request": "latest",
+    "body-parser": "latest"
   }
 }
