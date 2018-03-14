@@ -48,3 +48,30 @@ exports.onMoodleSession = function (req, response)
         }
     });
 };
+
+exports.validateMoodleSession = function (req, response)
+{
+    var request = require("request");
+    var moodleSession = req.query['moodleSession'];
+    request({
+        url: "http://www.leoninum.org/moodle2/mod/resource/view.php?id=360",
+        method: "POST",
+        headers: {
+            Cookie: "MoodleSession=" + moodleSession + ";"
+        }
+    }, function (err, res)
+    {
+        if (!res)
+        {
+            response.json({error: "Moodle server did not respond"});
+            return;
+        } else if (res.headers["location"] === "http://www.leoninum.org/moodle2/login/index.php")
+        {
+            response.json({valid: false});
+            return;
+        }
+
+        response.json({valid: true});
+    });
+
+};

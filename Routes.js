@@ -7,4 +7,5 @@ module.exports = function (app)
     app.get("/moodleSession", MoodleSessionController.onMoodleSession);
     app.get("/fetch/:day",DayController.onFetchDay);
     app.get("/", IndexController.onIndex);
+    app.get("/validateSession", MoodleSessionController.validateMoodleSession);
 };
