@@ -81,11 +81,10 @@ exports.onFetchDay = function (req, response)
             return date;
         }
 
-        function convertDate2(date)
+        function convertDate2(date, time)
         {
-            var splitted = date.split(" ");
-            var splittedDate = splitted[0].split(".");
-            var splittedTime = splitted[1].split(":");
+            var splittedDate = date.split(".");
+            var splittedTime = time.split(":");
 
             var tmpDate = new Date();
             tmpDate.setDate(parseInt(splittedDate[0]));
@@ -94,7 +93,6 @@ exports.onFetchDay = function (req, response)
 
             tmpDate.setHours(parseInt(splittedTime[0]));
             tmpDate.setMinutes(parseInt(splittedTime[1]));
-            tmpDate.setSeconds(parseInt(splittedTime[2]));
 
             return tmpDate;
         }
@@ -103,7 +101,7 @@ exports.onFetchDay = function (req, response)
 
         var processedPlan = {};
         processedPlan.date = convertDate(fetchTextByClass(day, "Titel").split(",")[1].replace("�", "ä").substr(1));
-        processedPlan.state = convertDate2(fetchTextByClass(day, "Stand").split("Stand:")[1].replace(" ", "", 1));
+        processedPlan.state = convertDate2(fetchTextByClass(day, "Stand").match(/\d{2}[./-]\d{2}[./-]\d{4}/)[0], fetchTextByClass(day, "Stand").match(/([01]?[0-9]|2[0-3]):[0-5][0-9]/)[0]);
         processedPlan.usedTeachers = fetchTextByClass(day, "LehrerVerplant").replace("\n", "").replace("\n", "").replace("�", "ü");
         processedPlan.missingTeachers = fetchTextByClass(day, "Abwesenheiten-Lehrer").replace("\n", "").replace("\n", "").replace("�", "ü");
 
