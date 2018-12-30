@@ -1,25 +1,23 @@
-var securityService = require("./Security/SecurityService");
-var request = require("request");
-var yaml = require("js-yaml");
-var fs = require("fs");
-var config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'));
+let securityService = require("./Security/SecurityService");
+let request = require("request");
+let yaml = require("js-yaml");
+let fs = require("fs");
+let config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'));
 
 function obtainMoodleSession(username, password, onResult, onError) {
-
-  let result = {moodleSession: null, error: null};
 
   request({
     url: config.moodle.loginUrl,
     method: "POST",
     form: {
-      username: username,
-      password: password
+      username: username || "",
+      password: password || ""
     }
-  }, (err, res) => {
+  }, function (err, res) {
     if (!res) {
       onError("Moodle-Server hat nicht geantwortet");
 
-    } else if (res.headers["location"] === "http://www.leoninum.org/moodle2/login/index.php") {
+    } else if (res.headers["location"] === config.moodle.loginUrl) {
       onError("Passwort oder Benutzername falsch!");
 
     } else {
@@ -28,13 +26,10 @@ function obtainMoodleSession(username, password, onResult, onError) {
         let moodleSession = res.headers["set-cookie"][0].replace("MoodleSession=", "").split(";")[0];
         onResult(moodleSession);
       } catch (e) {
-        console.log(e);
         onError("Falsche Serverantwort");
       }
     }
   });
-
-  return result;
 }
 
 /**
@@ -53,6 +48,7 @@ exports.onMoodleSession = function (req, response) {
     });
     return;
   }
+
   obtainMoodleSession(username, password, (moodleSession) => {
     response.send({moodleSession: moodleSession});
   }, (error) => {
@@ -62,24 +58,27 @@ exports.onMoodleSession = function (req, response) {
 
 exports.secureMoodleSession = function (req, res) {
 
-  let decrypted = null;
-  try {
-    decrypted = securityService.decryptCredentials(req.query.secret);
-  } catch (e) {
-    res.send({error: "Serverfehler"});
-  }
+  if (req.query.secret !== undefined) {
+    let decrypted = null;
+    try {
+      decrypted = securityService.decryptCredentials(req.query.secret);
+    } catch (e) {
+      res.send({error: "Serverfehler"});
+    }
 
-  decrypted = JSON.parse(decrypted);
-  obtainMoodleSession(decrypted.username, decrypted.password, (moodleSession) => {
-    res.send({moodleSession: moodleSession});
-  }, (error) => {
-    res.send({error: error});
-  });
+    decrypted = JSON.parse(decrypted);
+    obtainMoodleSession(decrypted.username, decrypted.password, (moodleSession) => {
+      res.send({moodleSession: moodleSession});
+    }, (error) => {
+      res.send({error: error});
+    });
+  } else {
+    res.send({error: "Bitte gib Benutzername und Passwort an"});
+  }
 };
 
 exports.validateMoodleSession = function (req, response) {
-  var request = require("request");
-  var moodleSession = req.query['moodleSession'];
+  let moodleSession = req.query['moodleSession'];
   request({
     url: "http://www.leoninum.org/moodle2/mod/resource/view.php?id=360",
     method: "POST",
