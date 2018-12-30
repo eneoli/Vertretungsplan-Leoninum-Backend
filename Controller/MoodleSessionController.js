@@ -17,10 +17,10 @@ function obtainMoodleSession(username, password, onResult, onError) {
     }
   }, (err, res) => {
     if (!res) {
-      onError("Moodle server did not respond");
+      onError("Moodle-Server hat nicht geantwortet");
       return;
     } else if (res.headers["location"] === "http://www.leoninum.org/moodle2/login/index.php") {
-      onError("Wrong username or password");
+      onError("Passwort oder Benutzername falsch!");
       return;
     }
 
@@ -29,7 +29,7 @@ function obtainMoodleSession(username, password, onResult, onError) {
       onResult(moodleSession);
     } catch (e) {
       console.log(e);
-      onError("Wrong server response");
+      onError("Falsche Serverantwort");
     }
   });
 
@@ -48,7 +48,7 @@ exports.onMoodleSession = function (req, response) {
     var password = req.query["password"];
   } else {
     response.json({
-      error: "please provide username and password"
+      error: "Bitte gib Nutzername und Passwort an"
     });
     return;
   }
@@ -60,12 +60,16 @@ exports.onMoodleSession = function (req, response) {
 };
 
 exports.secureMoodleSession = function (req, res) {
-  let decrypted = securityService.decryptCredentials(req.query.secret);
+  try {
+    let decrypted = securityService.decryptCredentials(req.query.secret);
+  } catch (e) {
+    res.send({error: "Passwort oder Benutzername falsch!"});
+  }
   decrypted = JSON.parse(decrypted);
   obtainMoodleSession(decrypted.username, decrypted.password, (moodleSession) => {
     res.send({moodleSession: moodleSession});
   }, (error) => {
-    res.send({error: error}, 500);
+    res.send({error: error});
   });
 };
 
@@ -80,7 +84,7 @@ exports.validateMoodleSession = function (req, response) {
     }
   }, function (err, res) {
     if (!res) {
-      response.json({error: "Moodle server did not respond"});
+      response.json({error: "Moodle Server hat nicht geantwortet"});
       return;
     } else if (res.headers["location"] === "http://www.leoninum.org/moodle2/login/index.php") {
       response.json({valid: false});
