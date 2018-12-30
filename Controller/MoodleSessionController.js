@@ -60,11 +60,14 @@ exports.onMoodleSession = function (req, response) {
 };
 
 exports.secureMoodleSession = function (req, res) {
+
+  let decrypted = null;
   try {
-    let decrypted = securityService.decryptCredentials(req.query.secret);
+    decrypted = securityService.decryptCredentials(req.query.secret);
   } catch (e) {
-    res.send({error: "Passwort oder Benutzername falsch!"});
+    res.send({error: "Serverfehler"});
   }
+
   decrypted = JSON.parse(decrypted);
   obtainMoodleSession(decrypted.username, decrypted.password, (moodleSession) => {
     res.send({moodleSession: moodleSession});
