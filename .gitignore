@@ -3,4 +3,5 @@
 /package-lock.json
 /config.yml
 /.idea
-/Security
+/Security/private.pem
+/Security/public.pem
