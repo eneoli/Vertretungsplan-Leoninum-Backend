@@ -9,5 +9,5 @@ module.exports = function (app) {
     app.get("/", IndexController.onIndex);
     app.get("/validateSession", MoodleSessionController.validateMoodleSession);
     app.get("/publicKey", SecurityController.getPublicKey);
-    app.post("/secureMoodleSession", MoodleSessionController.secureMoodleSession);
+    app.get("/secureMoodleSession", MoodleSessionController.secureMoodleSession);
 };

@@ -60,7 +60,7 @@ exports.onMoodleSession = function (req, response) {
 };
 
 exports.secureMoodleSession = function (req, res) {
-  let decrypted = securityService.decryptCredentials(req.body.secret);
+  let decrypted = securityService.decryptCredentials(req.query.secret);
   decrypted = JSON.parse(decrypted);
   obtainMoodleSession(decrypted.username, decrypted.password, (moodleSession) => {
     res.send({moodleSession: moodleSession});
