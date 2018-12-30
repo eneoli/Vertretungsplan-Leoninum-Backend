@@ -18,18 +18,19 @@ function obtainMoodleSession(username, password, onResult, onError) {
   }, (err, res) => {
     if (!res) {
       onError("Moodle-Server hat nicht geantwortet");
-      return;
+
     } else if (res.headers["location"] === "http://www.leoninum.org/moodle2/login/index.php") {
       onError("Passwort oder Benutzername falsch!");
-      return;
-    }
 
-    try {
-      let moodleSession = res.headers["set-cookie"][0].replace("MoodleSession=", "").split(";")[0];
-      onResult(moodleSession);
-    } catch (e) {
-      console.log(e);
-      onError("Falsche Serverantwort");
+    } else {
+
+      try {
+        let moodleSession = res.headers["set-cookie"][0].replace("MoodleSession=", "").split(";")[0];
+        onResult(moodleSession);
+      } catch (e) {
+        console.log(e);
+        onError("Falsche Serverantwort");
+      }
     }
   });
 
