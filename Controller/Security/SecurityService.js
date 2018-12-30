@@ -13,13 +13,19 @@ exports.getPrivateKey = () => {
 
 
 exports.encryptCredentials = (data) => {
-  let pubKey = this.getPublicKey();
-  let encrypted = cryptoNode.publicEncrypt(pubKey, Buffer.from(data));
+  let encrypted = cryptoNode.publicEncrypt({
+    "key": this.getPublicKey(),
+    padding: cryptoNode.constants.RSA_PKCS1_PADDING
+  }, Buffer.from(data));
 
   return encrypted.toString("base64");
 };
 
 exports.decryptCredentials = (encryptedData) => {
-  let decrypted = cryptoNode.privateDecrypt(this.getPrivateKey(), Buffer.from(encryptedData, "base64"));
+  let decrypted = cryptoNode.privateDecrypt({
+    "key": this.getPrivateKey(),
+    padding: cryptoNode.constants.RSA_PKCS1_PADDING
+  }, Buffer.from(encryptedData, "base64"));
+
   return decrypted.toString("utf-8");
 };
