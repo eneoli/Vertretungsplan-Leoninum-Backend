@@ -1,11 +1,5 @@
-var securityService = require("../Security/SecurityService");
+var SecurityService = require("./SecurityService");
 
-exports.encryptCredentials = function (req, res) {
-  res.send(securityService.encryptCredentials(JSON.stringify(req.body)));
-};
-
-
-exports.decryptCredentials = function (req, res) {
-  securityService.decryptCredentials(req.body.secret);
-  res.send(securityService.decryptCredentials(req.body.secret));
+exports.getPublicKey = function (req, res) {
+  res.send(SecurityService.getPublicKey());
 };
