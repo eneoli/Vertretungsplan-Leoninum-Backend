@@ -20,7 +20,11 @@ exports.onFetchDay = function (req, response)
 
         function fetchTextByClass(day, className)
         {
-            return day.window.document.getElementsByClassName(className).item(0).textContent;
+            try {
+                return day.window.document.getElementsByClassName(className).item(0).textContent;
+            }catch (e) {
+                return "";
+            }
         }
 
         function convertDate(date)
